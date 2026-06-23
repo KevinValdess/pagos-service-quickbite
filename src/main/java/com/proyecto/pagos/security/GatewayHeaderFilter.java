@@ -17,6 +17,13 @@ import java.util.List;
 @Component
 public class GatewayHeaderFilter extends OncePerRequestFilter {
 
+    // Saltamos este filtro si la petición va dirigida a la UI o especificación de Swagger
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

@@ -1,6 +1,5 @@
 package com.proyecto.pagos.security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,8 +26,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Protegemos el endpoint de pagos
+                        // 1. Permitir acceso público y libre a la documentación de Swagger
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 2. Protegemos el endpoint de pagos
                         .requestMatchers("/api/pagos/**").authenticated()
+
+                        // 3. Cualquier otra petición residual requerirá autenticación
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(gatewayHeaderFilter, UsernamePasswordAuthenticationFilter.class);
